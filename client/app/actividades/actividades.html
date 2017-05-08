@@ -1,0 +1,652 @@
+<navbar></navbar>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <img class="pull-left imagen-cliente-actividades" delete-on-error-src ng-src="/api/cliente/logo/{{model.proyecto.cliente._id}}">
+      <h2 class="azul-destacado"><span class="label label-danger" ng-show="!model.proyecto.es_activo">Contrato inactivo</span> {{model.proyecto.cliente && model.proyecto.cliente.nombre? model.proyecto.cliente.nombre : 'Sin cliente asociado.'}} - {{model.proyecto.nombre}}</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" ui-sref="proyectos">Volver a lista de contratos</a>
+          <a href="#" ng-click="model.ver_agregar = !model.ver_agregar; model.ver_envio = false; model.ver_resumenes = false;"> | Nuevo trabajo</a>
+          <a href="#" ng-click="model.ver_envio = !model.ver_envio; model.ver_agregar = false; model.ver_resumenes = false;"> | Nuevo resumen cliente</a>
+          <a href="#" ng-click="model.ver_resumenes = !model.ver_resumenes; model.ver_agregar = false; model.ver_envio = false;"> | Historial de envíos</a>
+        </li>
+        <!-- form para agregar actividades -->
+        <form ng-submit="agregar_actividad()">
+          <li class="list-group-item" ng-show="model.ver_agregar">
+            <div class="form-group">
+              <label>Equipo asociado <small>Requerido</small></label>
+
+              <select class="form-control" ng-options="item as (item.nombre + ' , Serie: ' + item.serie) for item in model.proyecto.equipos track by item._id" ng-model="model.nuevo.equipo"></select>
+            </div>
+            <div class="form-group">
+              <label>Ubicación <small>Requerido</small></label>
+              <select required ng-model="model.nuevo.ubicacion" class="form-control">
+                <option value="" class="">Seleccione un elemento de la lista ...</option>
+                <option ng-repeat="item in model.proyecto.ubicaciones" value="{{item._id}}">{{item.nombre}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Motivo del trabajo <small>Requerido</small></label>
+              <select required class="form-control" ng-options="item as item for item in model.motivo_enum" ng-model="model.nuevo.motivo_visita">
+                <option value="" class="">Seleccione un elemento de la lista ...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Solicitante <small>Opcional</small></label>
+              <input type="text" class="form-control" placeholder="Nombre solicitante del trabajo" ng-model="model.nuevo.solicitante">
+            </div>
+            <div class="form-group">
+              <label>Indicador trabajo</label>
+              <div class="form-group">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-success">
+                    <input type="radio" name="indicador-{{actividad._id}}" ng-click="model.nuevo.indicador.es_verde = true; model.nuevo.indicador.es_amarillo = false; model.nuevo.indicador.es_rojo = false;">
+                    <span class="glyphicon glyphicon-ok" ng-show="model.nuevo.indicador.es_verde"></span>&nbsp;
+                  </label>
+                  <label class="btn btn-warning">
+                    <input type="radio" name="indicador-{{actividad._id}}" ng-click="model.nuevo.indicador.es_verde = false; model.nuevo.indicador.es_amarillo = true; model.nuevo.indicador.es_rojo = false;">
+                    <span class="glyphicon glyphicon-ok" ng-show="model.nuevo.indicador.es_amarillo"></span>&nbsp;
+                  </label>
+                  <label class="btn btn-danger">
+                    <input type="radio" name="indicador-{{actividad._id}}" ng-click="model.nuevo.indicador.es_verde = false; model.nuevo.indicador.es_amarillo = false; model.nuevo.indicador.es_rojo = true;">
+                    <span class="glyphicon glyphicon-ok" ng-show="model.nuevo.indicador.es_rojo"></span>&nbsp;
+                  </label>
+                </div>
+              </div>
+              <p class="help-block">Este indicador será mostrado en las plantillas resumen del cliente.</p>
+            </div>
+          </li>
+          <li class="list-group-item" ng-show="model.ver_agregar">
+            <div class="form-group">
+              <label>Parámetros funcionamiento</label>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>C. Compresor N°1</label>
+                </div>
+              </div>
+              <div class="col-md-10">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">R</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.compresor_n1_r">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">S</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.compresor_n1_s">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">T</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.compresor_n1_t">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>C. Compresor N°2</label>
+                </div>
+              </div>
+              <div class="col-md-10">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">R</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.compresor_n2_r">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">S</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.compresor_n2_s">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">T</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.compresor_n2_t">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>P. Succión</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.p_succion">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>P. Descarga</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.p_descarga">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>T. Inyección</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.t_inyeccion">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>T. Retorno</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.t_retorno">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>T. Ambiente</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.t_ambiente">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>T. Exterior</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="model.nuevo.parametros.t_exterior">
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item" ng-show="model.ver_agregar">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Estado inicial equipo <small>Requerido</small></label>
+                  <textarea rows="5" required class="form-control" placeholder="Escriba un texto descriptivo para este campo" ng-model="model.nuevo.estado_inicial.texto"></textarea>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Trabajos realizados <small>Requerido</small></label>
+                  <textarea rows="5" required class="form-control" placeholder="Escriba un texto descriptivo para este campo" ng-model="model.nuevo.trabajos_realizados.texto"></textarea>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Recomendaciones <small>Requerido</small></label>
+                  <textarea rows="5" required class="form-control" placeholder="Escriba un texto descriptivo para este campo" ng-model="model.nuevo.recomendaciones.texto"></textarea>
+                </div>
+              </div>
+            </div>
+          </li>
+          <a href="#" class="list-group-item " ng-init="model.ver_lista_trabajos = false" ng-click="model.ver_lista_trabajos = !model.ver_lista_trabajos" ng-show="model.ver_agregar">
+            <span class="azul-destacado ng-binding">
+              Lista de trabajos asociados {{model.nuevo.equipo && model.nuevo.equipo.tipo && model.nuevo.equipo.tipo.trabajos && model.nuevo.equipo.tipo.trabajos.length > 0 ? '(' + model.nuevo.equipo.tipo.trabajos.length + ')' : ''}}
+            </span>
+          </a>
+          <li class="list-group-item" ng-show="model.ver_agregar && model.ver_lista_trabajos && model.nuevo.equipo && model.nuevo.equipo.tipo && model.nuevo.equipo.tipo.trabajos && model.nuevo.equipo.tipo.trabajos.length > 0">
+            <div class="form-group">
+              <label>Trabajo para equipo tipo: {{model.nuevo.equipo.tipo.nombre}} ({{model.nuevo.equipo.tipo.trabajos.length}})</label>
+              <ul class="list-group list-group-hover scroll-lista-trab-realizados">
+                <label ng-repeat="trabajo in model.nuevo.equipo.tipo.trabajos | orderBy: 'nombre'" class="list-group-item {{trabajo.checked ? 'list-group-item-info' : ''}}">
+                  <input type="checkbox" ng-model="trabajo.checked"> {{$index + 1}} - {{trabajo.nombre}}
+                </label>
+              </ul>
+            </div>
+          </li>
+          <li class="list-group-item" ng-show="model.ver_agregar">
+            <div class="form-group">
+              <label>Observación gerencia</label>
+              <textarea rows="3" class="form-control" placeholder="Escriba un texto descriptivo para este campo" ng-model="model.nuevo.observacion.texto"></textarea>
+            </div>
+          </li>
+          <li class="list-group-item" ng-show="model.ver_agregar">
+            <button type="submit" class="btn btn-success">Agregar</button>
+            <button type="button" class="btn btn-danger" ng-click="cancelar_agregar()">Cancelar</button>
+          </li>
+        </form>
+        <li class="list-group-item" ng-show="model.ver_envio">
+          <p class="help-block">Para crear la hoja resumen de trabajos realizados debe ingresar por lo menos un correo cliente y un trabajo a informar.</p>
+          <div class="form-group">
+            <label>Correos cliente <small>Requerido</small></label>
+            <input type="text" class="form-control" placeholder="Correos del cliente" ng-model="model.envio.correos" ng-list="," ng-trim="true">
+            <p class="help-block">Para agregar multiples correos ocupe ',' (coma) como separador.</p>
+          </div>
+          <div class="form-group">
+            <label>Correos copia oculta</label>
+            <input type="text" class="form-control" placeholder="Correos copia oculta" ng-model="model.envio.cco" ng-list="," ng-trim="true">
+            <p class="help-block">Para agregar multiples correos ocupe ',' (coma) como separador.</p>
+          </div>
+          <div class="form-group">
+            <label>Texto asunto del correo</label>
+            <input type="text" class="form-control" placeholder="Texto asunto del correo" ng-model="model.envio.asunto">
+          </div>
+          <div class="form-group">
+            <label>Texto cuerpo del correo</label>
+            <textarea rows="4" class="form-control" placeholder="Texto cuerpo del correo" ng-model="model.envio.cuerpo"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Observación general <small>Requerida (solo visible en link cliente)</small></label>
+            <textarea rows="4" class="form-control" placeholder="Observación general" ng-model="model.envio.observacion"></textarea>
+          </div>
+          <div class="form-group">
+            <ul class="list-group">
+              <li class="list-group-item">
+                <a href="#" ng-click="model.ver_actividades_enviar = !model.ver_actividades_enviar">{{model.ver_actividades_enviar ? 'Ocultar trabajos que se informarán en este resumen' : 'Ver trabajos que se informarán en este resumen'}} ({{model.actividades_tmp ? model.actividades_tmp.length : '0'}})</a>
+              </li>
+              <li class="list-group-item" ng-show="model.ver_actividades_enviar" ng-repeat="actividad in model.actividades_tmp = (model.actividades | filter: { check_enviar: true })">
+                <div class="row">
+                  <div class="col-md-12">
+                    <a href="#" ng-click="actividad.check_enviar = false"><span class="glyphicon glyphicon-remove pull-right"></span></a>
+                    <p>
+                      <span class="label label-success" ng-show="actividad.indicador.es_verde">&nbsp;&nbsp;</span>
+                      <span class="label label-warning" ng-show="actividad.indicador.es_amarillo">&nbsp;&nbsp;</span>
+                      <span class="label label-danger" ng-show="actividad.indicador.es_rojo">&nbsp;&nbsp;</span>
+                      <span><strong>Fecha ingreso:</strong> {{actividad.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</span>
+                    </p>
+                  </div>
+                  <div class="col-md-6">
+                    <p><strong>Equipo:</strong> {{actividad.equipo.nombre}}</p>
+                    <p><strong>Marca:</strong> {{actividad.equipo.marca}}</p>
+                    <p><strong>Modelo:</strong> {{actividad.equipo.modelo}}</p>
+                    <p>
+                      <strong>Tipo:</strong> {{actividad.equipo.tipo ? actividad.equipo.tipo.nombre : 'Sin asignar'}} |
+                      <strong>Capacidad:</strong> {{actividad.equipo.capacidad}} |
+                      <strong>Serie:</strong> {{actividad.equipo.serie}} |
+                      <strong>Antiguedad:</strong> {{actividad.equipo.antiguedad}}
+                    </p>
+                  </div>
+                  <div class="col-md-6">
+                    <p><strong>Operador:</strong> {{actividad.creador.name}}</p>
+                    <p><strong>Motivo visita:</strong> {{actividad.motivo_visita}}</p>
+                    <p><strong>Ubicación:</strong> {{actividad.ubicacion.nombre}}</p>
+                    <p ng-show="actividad.solicitante"><strong>Solicitante:</strong> {{actividad.solicitante}}</p>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item" ng-show="model.ver_actividades_enviar && (!model.actividades_tmp || (model.actividades_tmp && model.actividades_tmp.length === 0))">
+                Sin datos para mostrar.
+              </li>
+            </ul>
+          </div>
+          <button type="submit" class="btn btn-success" ng-click="agregar_resumen()">Guardar y enviar resumen</button>
+          <button type="button" class="btn btn-danger" ng-click="cancelar_resumen()">Cancelar</button>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_resumenes">
+          <ul class="list-group">
+            <div ng-repeat="envio in model.envios | orderBy: '-fecha_creacion'">
+              <li class="list-group-item">
+                <span ng-show="!envio.fecha_envio" class="label label-danger">Resumen no enviado</span>
+                <small ng-show="envio.fecha_envio"><strong>Fecha envío:</strong> {{envio.fecha_envio | date:'dd/MM/yyyy HH:mm'}} | </small>
+                <small ng-show="envio.fecha_ultimo_reenvio"><strong>Fecha último reenvío:</strong> {{envio.fecha_ultimo_reenvio | date:'dd/MM/yyyy HH:mm'}} {{envio.cantidad_envios && envio.cantidad_envios > 0 ? ('(' + envio.cantidad_envios + ' reintentos) ') : ' ' }}| </small>
+                <small ng-show="envio.fecha_creacion"><strong>Fecha ingreso:</strong> {{envio.fecha_creacion | date:'dd/MM/yyyy HH:mm'}} | </small>
+                <small ng-show="envio.fecha_modificacion"><strong>Fecha modificación:</strong> {{envio.fecha_modificacion | date:'dd/MM/yyyy HH:mm'}} | </small>
+                <small ng-show="envio.creador"><strong>Creador:</strong> {{envio.creador ? envio.creador.name : 'Sin datos para mostrar'}}</small>
+                <a href="#" class="pull-right" ng-click="envio.ver_detalle = !envio.ver_detalle">{{envio.ver_detalle ? 'Ocultar detalles' : 'Ver detalles'}}</a>
+              </li>
+              <li class="list-group-item" ng-show="envio.ver_detalle">
+                <strong>Asunto:</strong> {{envio.asunto ? envio.asunto : 'Sin datos para mostrar.'}} |
+                <strong>Correos:</strong> {{envio.correos ? envio.correos.join(', ') : 'Sin datos para mostrar.'}} |
+                <strong>Copias ocultas:</strong> {{envio.cco ? envio.cco.join(', ') : 'Sin datos para mostrar.'}}
+                <br>
+                <strong>Cuerpo:</strong> <span class="string-multiline">{{envio.cuerpo ? envio.cuerpo : 'Sin datos para mostrar.'}}</span>
+                <br>
+                <strong>Observación general:</strong> <span class="string-multiline">{{envio.observacion ? envio.observacion : 'Sin datos para mostrar.'}}</span>
+                <br>
+                <strong>Cantidad de trabajos informados:</strong> {{envio.actividades ? envio.actividades.length : 'Sin datos para mostrar.'}}
+                <br>
+              </li>
+              <li class="list-group-item" ng-show="envio.ver_detalle">
+                <a href="#" ui-sref="resumen({id: envio._id})">Link resumen cliente</a>
+              </li>
+              <br>
+            </div>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-group" ng-repeat="actividad in model.actividades | orderBy: '-fecha_ingreso'| orderBy: '-es_activo'">
+        <!-- informacion y opciones -->
+        <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}">
+          <div class="row">
+            <div class="col-md-1 col-selector-actividad-1" ng-show="model.ver_envio && actividad.es_activo">
+              <button type="button" class="btn btn-default" ng-click="actividad.check_enviar = !actividad.check_enviar">
+                <span class="icono-selector-actividad glyphicon glyphicon-{{actividad.check_enviar ? 'check' : 'unchecked'}}"></span>
+              </button>
+            </div>
+            <div class="col-md-1 col-indicador-actividad-1">
+              <span class="label label-success" ng-show="actividad.indicador.es_verde">&nbsp;&nbsp;</span>
+              <span class="label label-warning" ng-show="actividad.indicador.es_amarillo">&nbsp;&nbsp;</span>
+              <span class="label label-danger" ng-show="actividad.indicador.es_rojo">&nbsp;&nbsp;</span>
+            </div>
+            <div class="col-md-10">
+              <span><strong>Fecha ingreso:</strong> {{actividad.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</span>
+              <span ng-show="actividad.es_pendiente"> | <span class="label label-warning">Pendiente</span></span>
+              <span ng-hide="actividad.es_activo"> | <span class="label label-danger">Desactivada</span></span>
+              <br>
+              <small ng-hide="actividad.ver_editar">
+            <a href="#" ng-show="actividad.es_pendiente" ng-click="revisar(actividad)">Marcar como revisada</a>
+            <a href="#" ng-hide="actividad.es_pendiente" ng-click="revisar(actividad)">Marcar pendiente</a>
+            <a href="#" ng-click="ver_form_editar(actividad)"> | Editar</a>
+            <a href="#" ng-show="actividad.es_activo" ng-click="desactivar(actividad)"> | Desactivar</a>
+            <a href="#" ng-hide="actividad.es_activo" ng-click="desactivar(actividad)"> | Activar</a>
+          </small>
+            </div>
+          </div>
+        </li>
+        <!-- editar datos de actividad -->
+        <form ng-submit="editar_actividad(actividad)" ng-show="actividad.ver_editar">
+          <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}">
+            <div class="form-group">
+              <label>Equipo asociado <small>Requerido</small></label>
+              <select class="form-control" ng-options="item as item.nombre for item in model.proyecto.equipos track by item._id" ng-model="actividad.editar.equipo"></select>
+            </div>
+            <div class="form-group">
+              <label>Ubicación <small>Requerido</small></label>
+              <select class="form-control" ng-options="item as item.nombre for item in model.proyecto.ubicaciones track by item._id" ng-model="actividad.editar.ubicacion"></select>
+            </div>
+            <div class="form-group">
+              <label>Motivo del trabajo <small>Requerido</small></label>
+              <select required class="form-control" ng-options="item as item for item in model.motivo_enum" ng-model="actividad.editar.motivo_visita">
+                <option value="" class="">Seleccione un elemento de la lista ...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Solicitante <small>Opcional</small></label>
+              <input type="text" class="form-control" placeholder="Nombre solicitante del trabajo" ng-model="actividad.editar.solicitante">
+            </div>
+            <div class="form-group">
+              <label>Indicador trabajo</label>
+              <div class="form-group">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-success">
+                    <input type="radio" name="indicador-{{actividad._id}}" ng-click="actividad.editar.indicador.es_verde = true; actividad.editar.indicador.es_amarillo = false; actividad.editar.indicador.es_rojo = false;">
+                    <span class="glyphicon glyphicon-ok" ng-show="actividad.editar.indicador.es_verde"></span>&nbsp;
+                  </label>
+                  <label class="btn btn-warning">
+                    <input type="radio" name="indicador-{{actividad._id}}" ng-click="actividad.editar.indicador.es_verde = false; actividad.editar.indicador.es_amarillo = true; actividad.editar.indicador.es_rojo = false;">
+                    <span class="glyphicon glyphicon-ok" ng-show="actividad.editar.indicador.es_amarillo"></span>&nbsp;
+                  </label>
+                  <label class="btn btn-danger">
+                    <input type="radio" name="indicador-{{actividad._id}}" ng-click="actividad.editar.indicador.es_verde = false; actividad.editar.indicador.es_amarillo = false; actividad.editar.indicador.es_rojo = true;">
+                    <span class="glyphicon glyphicon-ok" ng-show="actividad.editar.indicador.es_rojo"></span>&nbsp;
+                  </label>
+                </div>
+              </div>
+              <p class="help-block">Este indicador será mostrado en las plantillas resumen del cliente.</p>
+            </div>
+          </li>
+          <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}">
+            <div class="form-group">
+              <label>Parámetros funcionamiento</label>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>C. Compresor N°1</label>
+                </div>
+              </div>
+              <div class="col-md-10">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">R</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.compresor_n1_r">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">S</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.compresor_n1_s">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">T</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.compresor_n1_t">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>C. Compresor N°2</label>
+                </div>
+              </div>
+              <div class="col-md-10">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">R</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.compresor_n2_r">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">S</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.compresor_n2_s">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group form-group">
+                      <div class="input-group-addon">T</div>
+                      <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.compresor_n2_t">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>P. Succión</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.p_succion">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>P. Descarga</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.p_descarga">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>T. Inyección</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.t_inyeccion">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>T. Retorno</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.t_retorno">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>T. Ambiente</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.t_ambiente">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>T. Exterior</label>
+                  <input type="number" class="form-control" placeholder="" ng-model="actividad.editar.parametros.t_exterior">
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Estado inicial equipo <small>Requerido</small></label>
+                  <textarea rows="5" required class="form-control" placeholder="Escriba un texto descriptivo para este campo" ng-model="actividad.editar.estado_inicial.texto"></textarea>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Trabajos realizados <small>Requerido</small></label>
+                  <textarea rows="5" required class="form-control" placeholder="Escriba un texto descriptivo para este campo" ng-model="actividad.editar.trabajos_realizados.texto"></textarea>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Recomendaciones <small>Requerido</small></label>
+                  <textarea rows="5" required class="form-control" placeholder="Escriba un texto descriptivo para este campo" ng-model="actividad.editar.recomendaciones.texto"></textarea>
+                </div>
+              </div>
+            </div>
+          </li>
+          <a href="#" class="list-group-item " ng-init="actividad.editar.ver_lista_trabajos = false" ng-click="actividad.editar.ver_lista_trabajos = !actividad.editar.ver_lista_trabajos">
+            <span class="azul-destacado ng-binding">
+              Lista de trabajos asociados
+            </span>
+          </a>
+          <li class="list-group-item" ng-show="actividad.editar.ver_lista_trabajos && actividad.editar.equipo && actividad.editar.equipo.tipo && actividad.editar.equipo.tipo.trabajos && actividad.editar.equipo.tipo.trabajos.length > 0">
+            <div class="form-group">
+              <label>Trabajo para equipo tipo: {{actividad.editar.equipo.tipo.nombre}}</label>
+              <ul class="list-group list-group-hover scroll-lista-trab-realizados">
+                <label ng-repeat="trabajo in actividad.editar.equipo.tipo.trabajos | orderBy: 'nombre'" class="list-group-item {{trabajo.checked ? 'list-group-item-info' : ''}}">
+                  <input type="checkbox" ng-model="trabajo.checked"> {{$index + 1}} - {{trabajo.nombre}}
+                </label>
+              </ul>
+            </div>
+          </li>
+          <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}">
+            <div class="form-group">
+              <label>Observación gerencia</label>
+              <textarea rows="3" class="form-control" placeholder="Escriba un texto descriptivo para este campo" ng-model="actividad.editar.observacion.texto"></textarea>
+            </div>
+          </li>
+          <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}">
+            <button type="submit" class="btn btn-success">Guardar cambios</button>
+            <button type="button" class="btn btn-danger" ng-click="cancelar_editar()">Cancelar</button>
+          </li>
+        </form>
+        <!-- datos de actividad -->
+        <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}} group-item-info" ng-hide="actividad.ver_editar">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Equipo:</strong> {{actividad.equipo.nombre}}</p>
+              <p><strong>Marca:</strong> {{actividad.equipo.marca}}</p>
+              <p><strong>Modelo:</strong> {{actividad.equipo.modelo}}</p>
+              <p>
+                <strong>Tipo:</strong> {{actividad.equipo.tipo ? actividad.equipo.tipo.nombre : 'Sin asignar'}} |
+                <strong>Capacidad:</strong> {{actividad.equipo.capacidad}} |
+                <strong>Serie:</strong> {{actividad.equipo.serie}} |
+                <strong>Antiguedad:</strong> {{actividad.equipo.antiguedad}}
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Operador:</strong> {{actividad.creador.name}}</p>
+              <p><strong>Motivo visita:</strong> {{actividad.motivo_visita}}</p>
+              <p><strong>Ubicación:</strong> {{actividad.ubicacion.nombre}}</p>
+              <p ng-show="actividad.solicitante"><strong>Solicitante:</strong> {{actividad.solicitante}}</p>
+            </div>
+          </div>
+        </li>
+        <a href="#" class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}" ng-init="actividad.ver_parametros = false" ng-click="actividad.ver_parametros = !actividad.ver_parametros">
+          <span class="azul-destacado">{{actividad.ver_parametros ? 'Ocultar parámetros' : 'Ver parámetros'}}</span>
+        </a>
+        <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}" ng-hide="actividad.ver_editar || !actividad.ver_parametros">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12">
+                  <p><strong>C. Compresor N°1</strong></p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>R:</strong> {{actividad.parametros.compresor_n1_r}}</p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>S:</strong> {{actividad.parametros.compresor_n1_s}}</p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>T:</strong> {{actividad.parametros.compresor_n1_t}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12">
+                  <p><strong>C. Compresor N°2</strong></p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>R:</strong> {{actividad.parametros.compresor_n2_r}}</p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>S:</strong> {{actividad.parametros.compresor_n2_s}}</p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>T:</strong> {{actividad.parametros.compresor_n2_t}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <p><strong>P. Succión:</strong> {{actividad.parametros.p_succion}}</p>
+            </div>
+            <div class="col-md-2">
+              <p><strong>P. Descarga:</strong> {{actividad.parametros.p_descarga}}</p>
+            </div>
+            <div class="col-md-2">
+              <p><strong>T. Inyección:</strong> {{actividad.parametros.t_inyeccion}}</p>
+            </div>
+            <div class="col-md-2">
+              <p><strong>T. Retorno:</strong> {{actividad.parametros.t_retorno}}</p>
+            </div>
+            <div class="col-md-2">
+              <p><strong>T. Ambiente:</strong> {{actividad.parametros.t_ambiente}}</p>
+            </div>
+            <div class="col-md-2">
+              <p><strong>T. Exterior:</strong> {{actividad.parametros.t_exterior}}</p>
+            </div>
+          </div>
+          <p><small>Fecha ingreso: {{actividad.parametros.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+        </li>
+        <a href="#" class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}" ng-init="actividad.ver_textos = false" ng-click="actividad.ver_textos = !actividad.ver_textos">
+          <span class="azul-destacado">{{actividad.ver_textos ? 'Ocultar observaciones' : 'Ver observaciones'}}</span>
+        </a>
+        <li class="list-group-item {{!actividad.es_activo ? 'list-group-item-danger' : ''}}" ng-hide="actividad.ver_editar || !actividad.ver_textos">
+          <div class="row">
+            <div class="col-md-4">
+              <p><strong>Estado inicial equipo</strong></p>
+              <p class="string-multiline">{{actividad.estado_inicial.texto}}</p>
+              <img delete-on-error-src class="img-responsive" src="/api/actividad/estado_inicial/imagen/{{actividad._id}}">
+              <p><small>Fecha ingreso: {{actividad.estado_inicial.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Trabajos realizados</strong></p>
+              <p class="string-multiline">{{actividad.trabajos_realizados.texto}}</p>
+              <p ng-show="actividad.trabajos_realizados.trabajos && actividad.trabajos_realizados.trabajos.length > 0"><small><strong><!-- <span class="glyphicon glyphicon-wrench"></span>  -->Se realizaron {{actividad.trabajos_realizados.trabajos.length}} trabajos para equipo tipo {{actividad.equipo.tipo ? actividad.equipo.tipo.nombre : 'Sin asignar'}}:</strong> <span class="underline-hover" ng-repeat="trabajo in actividad.trabajos_realizados.trabajos | orderBy: 'nombre'"><strong>({{$index + 1}})</strong> {{trabajo.nombre + ($last ? '.':', ')}}</span></span></small></p>
+              <img delete-on-error-src class="img-responsive" src="/api/actividad/trabajos_realizados/imagen/{{actividad._id}}">
+              <p><small>Fecha ingreso: {{actividad.trabajos_realizados.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Recomendaciones</strong></p>
+              <p class="string-multiline">{{actividad.recomendaciones.texto}}</p>
+              <p><small>Fecha ingreso: {{actividad.recomendaciones.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+            </div>
+            <div class="col-md-12">
+              <p><strong>Observación gerencia</strong></p>
+              <p class="string-multiline">{{actividad.observacion.texto ? actividad.observacion.texto : 'Sin datos para mostrar'}}</p>
+              <p><small>Fecha ingreso: {{actividad.observacion.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<footer></footer>

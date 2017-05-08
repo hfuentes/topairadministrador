@@ -1,0 +1,120 @@
+<navbar></navbar>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Clientes</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" ng-click="model.ver_agregar = !model.ver_agregar;">
+            <strong>Nuevo cliente</strong>
+          </a>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_agregar">
+          <form ng-submit="agregar()">
+            <div class="form-group">
+              <label>Nombre referencial <small>requerido</small></label>
+              <input type="text" required class="form-control" placeholder="Nombre referencial cliente" ng-model="model.nuevo.nombre">
+            </div>
+            <div class="form-group">
+              <label>Correos</label>
+              <input type="text" class="form-control" placeholder="Correos del cliente" ng-model="model.nuevo.correos" ng-list="," ng-trim="true">
+              <p class="help-block">Para agregar multiples correos ocupe ',' (coma) como separador.</p>
+            </div>
+            <div class="form-group">
+              <label>Nombre de contacto</label>
+              <input type="text" class="form-control" placeholder="Nombre de contacto" ng-model="model.nuevo.contacto">
+            </div>
+            <div class="form-group">
+              <label>Teléfono de contacto</label>
+              <input type="text" class="form-control" placeholder="Teléfono de contacto" ng-model="model.nuevo.telefono">
+            </div>
+            <div class="form-group">
+              <label>Dirección empresa</label>
+              <input type="text" class="form-control" placeholder="Dirección empresa" ng-model="model.nuevo.direccion">
+            </div>
+            <div class="form-group">
+              <label>Logo</label>
+              <input type="file" class="form-control" placeholder="Logo cliente" ng-model="model.nuevo.logo" base-sixty-four-input>
+              <p class="help-block">Debe seleccionar una imagen de tamaño menor a 2MB y tipo JPG.</p>
+            </div>
+            <button type="submit" class="btn btn-default">Nuevo cliente</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <!-- lista de clientes -->
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" ng-click="model.ver_activos = !model.ver_activos;">
+            <strong>Clientes activos</strong>
+          </a>
+        </li>
+        <li class="list-group-item" ng-show="!model.clientes || (model.clientes && model.clientes.length == 0)">Sin datos para mostrar</li>
+        <li class="list-group-item {{!cliente.es_activo ? 'list-group-item-danger' : ''}}" ng-repeat="cliente in model.clientes | orderBy: 'nombre' | orderBy: '-es_activo'" ng-show="model.ver_activos">
+          <div class="row" ng-hide="cliente.ver_editar">
+            <div class="col-md-2">
+              <img class="img-responsive center-block" on-error-src="/assets/images/no-image.png" ng-src="/api/cliente/logo/{{cliente._id}}" ng-if="!cliente.ver_editar">
+            </div>
+            <div class="col-md-10">
+              <strong>{{cliente.nombre}}</strong>
+              <br>
+              <strong>Correos:</strong>
+              <span>{{cliente.correos && cliente.correos.length > 0 ? cliente.correos.join(', ') : 'Sin correos asociado.'}}</span>
+              <br>
+              <strong>Nombre de contacto:</strong> {{cliente.contacto || 'Sin asignar.'}} | 
+              <strong>Teléfono de contacto:</strong> {{cliente.telefono || 'Sin asignar.'}} | 
+              <strong>Dirección empresa:</strong> {{cliente.direccion || 'Sin asignar.'}}
+              <br>
+              <small>Fecha creación: {{cliente.fecha_creacion | date:'dd/MM/yyyy HH:mm'}}</small>
+              <small ng-show="cliente.fecha_modificacion">Última modificación: {{cliente.fecha_modificacion | date:'dd/MM/yyyy HH:mm'}}</small>
+              <a href="#" title="{{cliente.es_activo ? 'Desactivar' : 'Activar'}} cliente" class="pull-right" ng-click="cliente.es_activo ? desactivar(cliente) : activar(cliente)">
+                <span class="glyphicon glyphicon-{{cliente.es_activo ? 'trash' : 'ok'}}"></span>
+              </a>
+              <a href="#" title="Editar datos de cliente" class="pull-right" ng-click="ver_form_editar(cliente)">
+                <span class="glyphicon glyphicon-edit"></span>
+              </a>
+            </div>
+          </div>
+          <form ng-submit="editar(cliente)" ng-show="cliente.ver_editar">
+            <div class="form-group">
+              <label>Nombre referencial <small>requerido</small></label>
+              <input type="text" required class="form-control" placeholder="Nombre referencial cliente" ng-model="cliente.editar.nombre">
+            </div>
+            <div class="form-group">
+              <label>Correos</label>
+              <input type="text" class="form-control" placeholder="Correos del cliente" ng-model="cliente.editar.correos" ng-list="," ng-trim="true">
+              <p class="help-block">Para agregar multiples correos ocupe ',' (coma) como separador.</p>
+            </div>
+            <div class="form-group">
+              <label>Nombre de contacto</label>
+              <input type="text" class="form-control" placeholder="Nombre de contacto" ng-model="cliente.editar.contacto">
+            </div>
+            <div class="form-group">
+              <label>Teléfono de contacto</label>
+              <input type="text" class="form-control" placeholder="Teléfono de contacto" ng-model="cliente.editar.telefono">
+            </div>
+            <div class="form-group">
+              <label>Dirección empresa</label>
+              <input type="text" class="form-control" placeholder="Dirección empresa" ng-model="cliente.editar.direccion">
+            </div>
+            <div class="form-group">
+              <label>Logo</label>
+              <input type="file" class="form-control" placeholder="Logo cliente" ng-model="cliente.editar.logo" base-sixty-four-input>
+              <p class="help-block">Debe seleccionar una imagen de tamaño menor a 2MB y tipo JPG.</p>
+            </div>
+            <button type="submit" class="btn btn-default">Guardar</button>
+            <button type="button" class="btn btn-default" ng-click="ocultar_form_editar(cliente)">Cancelar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<footer></footer>

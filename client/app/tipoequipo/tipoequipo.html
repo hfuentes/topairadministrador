@@ -1,0 +1,100 @@
+<navbar></navbar>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Tipos de equipos</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" ui-sref="equipos">Volver a equipos</a> | 
+          <a href="#" ng-click="model.ver_agregar = !model.ver_agregar;">Agregar tipo de equipo</a>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_agregar">
+          <form ng-submit="agregar()">
+            <div class="form-group">
+              <label>Nombre tipo <small>requerido</small></label>
+              <input type="text" required class="form-control" placeholder="Nombre tipo" ng-model="model.nuevo.nombre">
+            </div>
+            <div class="form-group">
+              <label>Tipos de trabajos asociados</label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Nombre tipo de trabajo asociado" ng-model="model.nuevo.trabajo_temp">
+                <span class="input-group-btn"><button class="btn btn-default" type="button" ng-click="agregar_trabajo_nuevo()">Agregar</button></span>
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item" ng-repeat="trabajo in model.nuevo.trabajos track by $index">
+                  {{trabajo}}
+                  <a href="#" ng-click="model.nuevo.trabajos.splice($index, 1)"><span class="glyphicon glyphicon-trash pull-right"></span></a>
+                </li>
+              </ul>
+            </div>
+            <button type="submit" class="btn btn-success">Agregar tipo de equipo</button>
+            <button type="button" class="btn btn-danger" ng-click="cancelar_agregar()">Cancelar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-group">
+        <li class="list-group-item">
+          Tipo de equipos
+        </li>
+        <li class="list-group-item" ng-show="!model.tipos || (model.tipos && model.tipos.length == 0)">Sin datos para mostrar</li>
+        <li ng-repeat="tipo in model.tipos | orderBy: 'nombre' | orderBy: '-es_activo'" class="list-group-item {{!tipo.es_activo ? 'list-group-item-danger' : ''}}">
+          <div ng-hide="tipo.ver_editar">
+            <p><strong>{{tipo.nombre}}</strong></p>
+            <ul class="list-unstyled" ng-repeat="trabajo in tipo.trabajos | orderBy: 'nombre'">
+              <li>{{trabajo.nombre}}</li>
+            </ul>
+            <small>Fecha creación: {{tipo.fecha_creacion | date:'dd/MM/yyyy HH:mm'}}</small> |
+            <small>Última modificación: {{tipo.fecha_modificacion | date:'dd/MM/yyyy HH:mm'}}</small>
+            <!-- <a href="#" title="{{tipo.es_activo ? 'Desactivar' : 'Activar'}} tipo de equipo" class="pull-right" ng-click="tipo.es_activo ? desactivar(tipo) : activar(tipo)"><span class="glyphicon glyphicon-{{tipo.es_activo ? 'trash' : 'ok'}}"></span></a> -->
+            <a href="#" title="Editar tipo de equipo" class="pull-right" ng-click="ver_form_editar(tipo)"><span class="glyphicon glyphicon-edit"></span></a>
+            </span>
+          </div>
+          <div ng-show="tipo.ver_editar">
+            <form ng-submit="editar(tipo)">
+              <div class="form-group">
+                <label>Nombre tipo <small>requerido</small></label>
+                <input type="text" required class="form-control" placeholder="Nombre tipo" ng-model="tipo.editar.nombre">
+              </div>
+              <div class="form-group">
+                <label>Tipos de trabajos asociados</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Nombre tipo de trabajo" ng-model="tipo.editar.trabajo_temp">
+                  <span class="input-group-btn"><button class="btn btn-default" type="button" ng-click="agregar_trabajo_editar(tipo)">Agregar</button></span>
+                </div>
+                <ul class="list-group">
+                  <li class="list-group-item" ng-repeat="trabajo in tipo.editar.trabajos track by $index | orderBy: 'nombre'">
+                    <span ng-show="!trabajo.ver_editar">
+                    {{trabajo.nombre}}
+                    <a href="#" ng-click="tipo.editar.trabajos.splice($index, 1)"><span class="glyphicon glyphicon-trash pull-right"></span></a>
+                    <a href="#" ng-show="trabajo._id" ng-click="trabajo.nombre_temp = trabajo.nombre; trabajo.ver_editar = true;"><span class="glyphicon glyphicon-edit pull-right"></span></a>
+                    </span>
+                    <span ng-show="trabajo.ver_editar">
+                    <div class="form-group">
+                      <label>Nombre tipo de trabajo <small>requerido</small></label>
+                      <input type="text" class="form-control" placeholder="Nombre tipo de trabajo" ng-model="trabajo.nombre_temp">
+                    </div>
+                    <button type="button" class="btn btn-default" ng-click="guardar_trabajo_editada(trabajo)">Guardar</button>
+                    <button type="button" class="btn btn-default" ng-click="trabajo.ver_editar = false; trabajo.nombre_temp = '';">Cancelar</button>
+                  </span>
+                  </li>
+                </ul>
+              </div>
+              <button type="submit" class="btn btn-success">Guardar</button>
+              <button type="button" class="btn btn-danger" ng-click="cancelar_editar(tipo)">Cancelar</button>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+<footer></footer>

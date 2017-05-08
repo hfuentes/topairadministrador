@@ -1,0 +1,278 @@
+<navbar></navbar>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Contratos</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <!-- form para agregar proyectos -->
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" ng-click="model.ver_agregar = !model.ver_agregar;">
+            <strong>Nuevo contrato</strong>
+          </a>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_agregar">
+          <form ng-submit="agregar()">
+            <div class="form-group">
+              <label>Cliente <small>requerido</small></label>
+              <select ng-model="model.nuevo.cliente" class="form-control">
+                <option ng-repeat="cliente in model.clientes" value="{{cliente._id}}">{{cliente.nombre}}</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Nombre referencial <small>requerido</small></label>
+                  <input type="text" required class="form-control" placeholder="Nombre referencial contrato" ng-model="model.nuevo.nombre">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Número de contrato</label>
+                  <input type="text" class="form-control" placeholder="Número de contrato" ng-model="model.nuevo.numero">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Tipo contrato</label>
+                  <input type="text" required class="form-control" placeholder="Tipo contrato" ng-model="model.nuevo.tipo">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Especialidad</label>
+                  <input type="text" required class="form-control" placeholder="Especialidad" ng-model="model.nuevo.especialidad">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Periodo</label>
+                  <input type="text" required class="form-control" placeholder="Periodo" ng-model="model.nuevo.periodo">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Frecuencia</label>
+                  <input type="text" required class="form-control" placeholder="Frecuencia" ng-model="model.nuevo.frecuencia">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label>Fecha inicio</label>
+                <calendario date-model="model.nuevo.fecha_inicio" date-options="model.fecha_opciones" opened="false" />
+              </div>
+              <div class="col-md-4">
+                <label>Fecha finalizacion</label>
+                <calendario date-model="model.nuevo.fecha_fin" date-options="model.fecha_opciones" opened="false" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Ubicaciones del contrato <small>requerido</small></label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Nombre ubicación" ng-model="model.nuevo.ubicacion_temp">
+                <span class="input-group-btn"><button class="btn btn-default" type="button" ng-click="agregar_ubicacion_nuevo()">Agregar</button></span>
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item" ng-repeat="ubicacion in model.nuevo.ubicaciones track by $index">
+                  {{ubicacion}}
+                  <a href="#" ng-click="model.nuevo.ubicaciones.splice($index, 1)"><span class="glyphicon glyphicon-trash pull-right"></span></a>
+                </li>
+              </ul>
+            </div>
+            <div class="form-group">
+              <label>Seleccione equipos que son parte del contrato <small>requerido</small></label>
+              <ul class="list-group scroll-lista-equipos-proyecto">
+                <li class="list-group-item" ng-show="!model.equipos || (model.equipos && model.equipos.length === 0)">Sin datos para mostrar</li>
+                <li class="list-group-item" ng-repeat="equipo in model.equipos">
+                  <label>
+                    <input type="checkbox" ng-model="equipo.checked"> {{equipo.nombre}}
+                  </label>
+                </li>
+              </ul>
+            </div>
+            <div class="form-group">
+              <label>Seleccione los usuarios asociados al contrato (pueden ver el contrato en la APP móvil)</label>
+              <ul class="list-group">
+                <li class="list-group-item" ng-repeat="usuario in model.usuarios">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" ng-model="usuario.checked"> {{usuario.name}}&nbsp;
+                      <span ng-show="usuario.es_admin" class="label label-primary">{{usuario.glosa_rol}}</span>
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <button type="submit" class="btn btn-success">Nuevo contrato</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <!-- proyectos activos -->
+      <ul class="list-group">
+        <li class="list-group-item">
+          <!-- <a href="#" ng-click="model.ver_activos = !model.ver_activos;"> -->
+          <strong class="azul-destacado">Contratos activos</strong> | <a href="#" ng-click="model.ver_inactivos = !model.ver_inactivos">{{model.ver_inactivos ? 'Ocultar contratos inactivos' : 'Mostrar contratos inactivos'}}</a>
+        </li>
+        <li class="list-group-item" ng-show="!model.proyectos || (model.proyectos && model.proyectos.length == 0)">Sin datos para mostrar</li>
+        <li ng-repeat="proyecto in model.proyectos | orderBy: '-fecha_creacion' | orderBy: '-es_activo'" ng-show="model.ver_activos && (!model.ver_inactivos ? proyecto.es_activo : true)" class="list-group-item {{!proyecto.es_activo ? 'list-group-item-danger' : ''}}">
+          <div class="row">
+            <div class="col-md-12" ng-hide="proyecto.ver_editar">
+              <a ui-sref="actividades({id_proyecto: proyecto._id})" title="Ver trabajos">
+                <img class="pull-left imagen-cliente-actividades" delete-on-error-src ng-src="/api/cliente/logo/{{proyecto.cliente._id}}">
+                <span ng-show="!proyecto.es_activo" class="label label-danger">Contrato inactivo</span>
+                <h3>{{proyecto.cliente && proyecto.cliente.nombre? proyecto.cliente.nombre : 'Sin cliente asociado.'}} - {{proyecto.nombre}}</h3>
+              </a>
+            </div>
+            <div class="col-md-12" ng-hide="proyecto.ver_editar">
+              <strong>N° Contrato:</strong>
+              <span>{{proyecto.numero || 'Sin datos para mostrar' }}</span> | 
+              <strong>Fecha inicio:</strong>
+              <span>{{proyecto.fecha_inicio || 'Sin datos para mostrar' | date:'dd/MM/yyyy' }}</span> | 
+              <strong>Fecha finalización:</strong>
+              <span>{{proyecto.fecha_fin || 'Sin datos para mostrar' | date:'dd/MM/yyyy' }}</span>
+              <br>
+              <strong>Equipos:</strong>
+              <span ng-show="!proyecto.equipos || (proyecto.equipos && proyecto.equipos.length === 0)">Sin equipos asociados.</span>
+              <span ng-repeat="equipo in proyecto.equipos | orderBy: 'nombre'">{{equipo.nombre + ($last ? '.':', ')}}</span>
+              <br>
+              <strong>Ubicaciones:</strong>
+              <span ng-show="!proyecto.ubicaciones || (proyecto.ubicaciones && proyecto.ubicaciones.length === 0)">Sin ubicaciones asociadas.</span>
+              <span ng-repeat="ubicacion in proyecto.ubicaciones | orderBy: 'nombre'">{{ubicacion.nombre + ($last ? '.':', ')}}</span>
+              <br>
+              <strong>Asociados:</strong>
+              <span ng-show="!proyecto.usuarios || (proyecto.usuarios && proyecto.usuarios.length === 0)">Sin usuarios asociados.</span>
+              <span ng-repeat="usuario in proyecto.usuarios | orderBy: 'name'">{{usuario.name + ($last ? '.':', ')}}</span>
+            </div>
+            <div class="col-md-12" ng-show="proyecto.ver_editar">
+              <!-- form editar contrato activo -->
+              <form ng-submit="editar(proyecto)">
+                <div class="form-group">
+                  <label>Cliente <small>requerido</small></label>
+                  <select ng-model="proyecto.editar.cliente" class="form-control">
+                    <option ng-repeat="cliente in model.clientes" value="{{cliente._id}}">{{cliente.nombre}}</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Nombre referencial <small>requerido</small></label>
+                      <input type="text" required class="form-control" placeholder="Nombre referencial contrato" ng-model="proyecto.editar.nombre">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Número de contrato</label>
+                      <input type="text" class="form-control" placeholder="Número de contrato" ng-model="proyecto.editar.numero">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Tipo contrato</label>
+                      <input type="text" required class="form-control" placeholder="Tipo contrato" ng-model="proyecto.editar.tipo">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Especialidad</label>
+                      <input type="text" required class="form-control" placeholder="Especialidad" ng-model="proyecto.editar.especialidad">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Periodo</label>
+                      <input type="text" required class="form-control" placeholder="Periodo" ng-model="proyecto.editar.periodo">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Frecuencia</label>
+                      <input type="text" required class="form-control" placeholder="Frecuencia" ng-model="proyecto.editar.frecuencia">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <label>Fecha inicio</label>
+                    <calendario date-model="proyecto.editar.fecha_inicio" date-options="model.fecha_opciones" opened="false" />
+                  </div>
+                  <div class="col-md-4">
+                    <label>Fecha finalizacion</label>
+                    <calendario date-model="proyecto.editar.fecha_fin" date-options="model.fecha_opciones" opened="false" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Ubicaciones del contrato <small>requerido</small></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Nombre ubicación" ng-model="proyecto.editar.ubicacion_temp">
+                    <span class="input-group-btn"><button class="btn btn-default" type="button" ng-click="agregar_ubicacion_editar(proyecto)">Agregar</button></span>
+                  </div>
+                  <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="ubicacion in proyecto.editar.ubicaciones track by $index | orderBy: 'nombre'">
+                      <span ng-show="!ubicacion.ver_editar">
+                    {{ubicacion.nombre}}
+                    <a href="#" ng-click="proyecto.editar.ubicaciones.splice($index, 1)"><span class="glyphicon glyphicon-trash pull-right"></span></a>
+                      <a href="#" ng-show="ubicacion._id" ng-click="ubicacion.nombre_temp = ubicacion.nombre; ubicacion.ver_editar = true;"><span class="glyphicon glyphicon-edit pull-right"></span></a>
+                      </span>
+                      <span ng-show="ubicacion.ver_editar">
+                    <div class="form-group">
+                      <label>Nombre ubicación <small>requerido</small></label>
+                      <input type="text" class="form-control" placeholder="Nombre referencial ubicación" ng-model="ubicacion.nombre_temp">
+                    </div>
+                    <button type="button" class="btn btn-default" ng-click="guardar_ubicacion_editada(ubicacion)">Guardar</button>
+                    <button type="button" class="btn btn-default" ng-click="ubicacion.ver_editar = false; ubicacion.nombre_temp = '';">Cancelar</button>
+                  </span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="form-group">
+                  <label>Seleccione equipos que son parte del contrato <small>requerido</small></label>
+                  <ul class="list-group scroll-lista-equipos-proyecto">
+                    <li class="list-group-item" ng-show="!model.equipos || (model.equipos && model.equipos.length === 0)">Sin datos para mostrar</li>
+                    <li class="list-group-item" ng-repeat="equipo in proyecto.editar.equipos">
+                      <label>
+                        <input type="checkbox" ng-model="equipo.checked"> {{equipo.nombre}}
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+                <div class="form-group">
+                  <label>Seleccione los usuarios asociados al contrato</label>
+                  <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="usuario in proyecto.editar.usuarios">
+                      <label>
+                        <input type="checkbox" ng-model="usuario.checked"> {{usuario.name}}&nbsp;
+                        <span ng-show="usuario.es_admin" class="label label-primary">{{usuario.glosa_rol}}</span>
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+                <button type="submit" class="btn btn-default">Guardar</button>
+                <button type="button" class="btn btn-default" ng-click="ocultar_form_editar(proyecto)">Cancelar</button>
+              </form>
+            </div>
+            <div class="col-md-12" ng-hide="proyecto.ver_editar">
+              <hr>
+              <small>Fecha creación: {{proyecto.fecha_creacion | date:'dd/MM/yyyy HH:mm'}}</small>
+              <small ng-show="proyecto.fecha_modificacion">Última modificación: {{proyecto.fecha_modificacion | date:'dd/MM/yyyy HH:mm'}}</small>
+              <a href="#" title="Desactivar el contrato" class="pull-right" ng-click="desactivar(proyecto)">
+                <span class="glyphicon glyphicon-trash"></span>
+              </a>
+              <a href="#" title="Editar datos del contrato" class="pull-right" ng-click="ver_form_editar(proyecto)">
+                <span class="glyphicon glyphicon-edit"></span>
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<footer></footer>

@@ -1,0 +1,156 @@
+<navbar></navbar>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Equipos</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" ng-click="model.ver_agregar = !model.ver_agregar;">Agregar equipo</a> |
+          <a href="#" ui-sref="tiposequipos">Tipos de equipos y trabajos asociados</a>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_agregar">
+          <form ng-submit="agregar()">
+            <div class="form-group">
+              <label>Nombre referencial <small>requerido</small></label>
+              <input type="text" required class="form-control" placeholder="Nombre referencial equipo" ng-model="model.nuevo.nombre">
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Serie <small>requerido</small></label>
+                  <input type="text" required class="form-control" placeholder="Número de serie" ng-model="model.nuevo.serie">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Marca</label>
+                  <input type="text" class="form-control" placeholder="Marca" ng-model="model.nuevo.marca">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Capacidad</label>
+                  <input type="text" class="form-control" placeholder="Capacidad" ng-model="model.nuevo.capacidad">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Modelo</label>
+                  <input type="text" class="form-control" placeholder="Modelo" ng-model="model.nuevo.modelo">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Tipo</label>
+                  <select ng-model="model.nuevo.tipo" class="form-control">
+                    <option value="" class="">Seleccione un elemento de la lista ...</option>
+                    <option ng-repeat="item in model.tipos" value="{{item._id}}">{{item.nombre}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Antiguedad</label>
+                  <input type="text" class="form-control" placeholder="Antiguedad" ng-model="model.nuevo.antiguedad">
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success">Agregar equipo</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-group">
+        <li class="list-group-item">
+          Equipos
+        </li>
+        <li class="list-group-item" ng-show="!model.equipos || (model.equipos && model.equipos.length == 0)">Sin datos para mostrar</li>
+        <li class="list-group-item {{!equipo.es_activo ? 'list-group-item-danger' : ''}}" ng-repeat="equipo in model.equipos | orderBy: 'nombre' | orderBy: '-es_activo'" ng-show="model.ver_activos">
+          <div class="row">
+            <div class="col-md-3" ng-show="equipo.ver_qr" id="div_qr_{{equipo._id}}">
+              <qr text="equipo._id" size="200" id="qr_{{equipo._id}}" image="true" class="equipo_qr"></qr>
+              <a href="#" title="Imprimir" ng-click="imprimir_single(equipo)">Imprimir</a>
+            </div>
+            <div class="col-md-{{equipo.ver_qr ? '9' : '12'}}">
+              <span ng-hide="equipo.ver_editar">
+                <p><strong>{{equipo.nombre}}</strong></p>
+                <div class="row">
+                  <div class="col-md-4"><p><strong>Serie:</strong> {{equipo.serie}}</p></div>
+                  <div class="col-md-4"><p><strong>Marca:</strong> {{equipo.marca}}</p></div>
+                  <div class="col-md-4"><p><strong>Capacidad:</strong> {{equipo.capacidad}}</p></div>
+                  <div class="col-md-4"><p><strong>Modelo:</strong> {{equipo.modelo}}</p></div>
+                  <div class="col-md-4"><p><strong>Tipo:</strong> {{equipo.tipo ? equipo.tipo.nombre : 'Sin asignar'}}</p></div>
+                  <div class="col-md-4"><p><strong>Antiguedad:</strong> {{equipo.antiguedad}}</p></div>
+                </div>
+                <br>
+                <small><a href="#" ng-click="equipo.ver_qr = !equipo.ver_qr" class="glyphicon glyphicon-qrcode" title="{{equipo.ver_qr ? 'Ocultar' : 'Mostrar'}} código QR"></a> | </small>
+                <small>Fecha creación: {{equipo.fecha_creacion | date:'dd/MM/yyyy HH:mm'}}</small>
+                <small ng-show="equipo.fecha_modificacion">Última modificación: {{equipo.fecha_modificacion | date:'dd/MM/yyyy HH:mm'}}</small>
+                <a href="#" title="{{equipo.es_activo ? 'Desactivar' : 'Activar'}} equipo" class="pull-right" ng-click="equipo.es_activo ? desactivar(equipo) : activar(equipo)"><span class="glyphicon glyphicon-{{equipo.es_activo ? 'trash' : 'ok'}}"></span></a>
+              <a href="#" title="Editar datos de equipo" class="pull-right" ng-click="ver_form_editar(equipo)"><span class="glyphicon glyphicon-edit"></span></a>
+              </span>
+              <form ng-submit="editar(equipo)" ng-show="equipo.ver_editar">
+                <div class="form-group">
+                  <label>Nombre referencial <small>requerido</small></label>
+                  <input type="text" required class="form-control" placeholder="Nombre referencial equipo" ng-model="equipo.editar.nombre">
+                </div>
+                <div class="form-group">
+                  <label>Serie <small>requerido</small></label>
+                  <input type="text" required class="form-control" placeholder="Número de serie" ng-model="equipo.editar.serie">
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Serie <small>requerido</small></label>
+                      <input type="text" required class="form-control" placeholder="Número de serie" ng-model="equipo.editar.serie">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Marca</label>
+                      <input type="text" class="form-control" placeholder="Marca" ng-model="equipo.editar.marca">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Capacidad</label>
+                      <input type="text" class="form-control" placeholder="Capacidad" ng-model="equipo.editar.capacidad">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Modelo</label>
+                      <input type="text" class="form-control" placeholder="Modelo" ng-model="equipo.editar.modelo">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Tipo</label>
+                      <select class="form-control" ng-options="item as item.nombre for item in model.tipos track by item._id" ng-model="equipo.editar.tipo"></select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Antiguedad</label>
+                      <input type="text" class="form-control" placeholder="Antiguedad" ng-model="equipo.editar.antiguedad">
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-default">Guardar</button>
+                <button type="button" class="btn btn-default" ng-click="ocultar_form_editar(equipo)">Cancelar</button>
+              </form>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<footer></footer>

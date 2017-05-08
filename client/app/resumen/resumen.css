@@ -1,0 +1,15 @@
+.h-img-header-resumen {
+  max-height: 100px;
+}
+
+.label-bandera-resumen {
+  font-size: 1em;
+}
+
+.icono-bandera-resumen {
+  font-size: 1.5em;
+}
+
+.color-amarillo {
+  background-color: #FFD519 !important;
+}

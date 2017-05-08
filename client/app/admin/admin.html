@@ -1,0 +1,103 @@
+<navbar></navbar>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Usuarios</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <!-- form para agregar usuarios -->
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" ng-click="model.ver_agregar = !model.ver_agregar;">
+            <strong>Nuevo usuario</strong>
+          </a>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_agregar">
+          <form name="form" ng-submit="agregar()">
+            <div class="form-group">
+              <label>Nombre referencial <small>Requerido</small></label>
+              <input type="text" required class="form-control" placeholder="Nombre referencial, ej: José" ng-model="model.nuevo.name">
+            </div>
+            <div class="form-group">
+              <label>Correo contacto</label>
+              <input type="text" class="form-control" placeholder="ej: jose@topair.cl" ng-model="model.nuevo.correo">
+            </div>
+            <div class="form-group">
+              <label>Nombre de usuario <small>Requerido</small></label>
+              <input type="text" required class="form-control" placeholder="Nombre de usuario, ej: usuario12" ng-model="model.nuevo.email">
+              <p class="help-block">Nombre de usuario debe ser único.</p>
+            </div>
+            <div class="form-group">
+              <label>Contraseña <small>Requerido</small></label>
+              <input type="password" name="password" class="form-control" ng-model="model.nuevo.password" placeholder="Solo números y letras, debe tener entre 3 a 10 caracteres" maxlength="10" minlength="3" required pattern="[A-Za-z0-9]+" />
+              <p class="help-block">Solo números y letras, debe tener entre 3 a 10 caracteres.</p>
+            </div>
+            <div class="form-group">
+              <label>Rol <small>Requerido</small></label>
+              <select ng-model="model.nuevo.role" class="form-control">
+                <option ng-repeat="rol in model.roles" value="{{rol.valor}}">{{rol.nombre}}</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-default">Agregar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item">
+      <strong>Usuarios</strong>
+    </li>
+    <li class="list-group-item" ng-if="!model.users || (model.users && model.users.length === 0)">Sin usuarios para mostrar</li>
+    <li ng-repeat="user in model.users | orderBy: 'nombre'| orderBy: '-es_activo'" ng-class="user.es_activo ? 'list-group-item':'list-group-item list-group-item-danger'">
+      <span ng-hide="user.ver_editar">
+        <strong>{{user.name}}</strong>
+        <span ng-show="user.role === 'admin'" class="label label-primary">Es administrador</span>
+        <br>
+        <span class="text-muted">{{user.email}}</span>
+      </span>
+      <!-- form editar datos de usuario -->
+      <form ng-submit="editar(user)" ng-show="user.ver_editar">
+        <div class="form-group">
+          <label>Nombre referencial <small>Requerido</small></label>
+          <input type="text" required class="form-control" placeholder="Nombre referencial, ej: José" ng-model="user.user_editar.name">
+        </div>
+        <div class="form-group">
+          <label>Correo contacto</label>
+          <input type="text" class="form-control" placeholder="ej: jose@topair.cl" ng-model="user.user_editar.correo">
+        </div>
+        <div class="form-group">
+          <label>Nombre de usuario <small>Requerido</small></label>
+          <input type="text" required class="form-control" placeholder="Nombre de usuario, ej: usuario12" ng-model="user.user_editar.email">
+          <p class="help-block">Nombre de usuario debe ser único.</p>
+        </div>
+        <div class="form-group">
+          <label>Contraseña <small>Opcional, agregar solo para sobrescribir contraseña actual</small></label>
+          <input type="password" name="password" class="form-control" ng-model="user.user_editar.password" placeholder="Solo números y letras, debe tener entre 3 a 10 caracteres" maxlength="10" minlength="3" pattern="[A-Za-z0-9]+" />
+          <p class="help-block">Solo números y letras, debe tener entre 3 a 10 caracteres.</p>
+        </div>
+        <div class="form-group">
+          <label>Rol <small>Requerido</small></label>
+          <select ng-model="user.user_editar.role" class="form-control">
+            <option ng-repeat="rol in model.roles" value="{{rol.valor}}">{{rol.nombre}}</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-default">Guardar</button>
+        <button type="button" class="btn btn-default" ng-click="ocultar_form_editar(user)">Cancelar</button>
+      </form>
+      <span ng-hide="user.ver_editar">
+        <a ng-show="user.es_activo" ng-click="desactivar(user)" class="text-danger pull-right" title="Desactivar usuario">
+          <span class="glyphicon glyphicon-trash"></span>
+      </a>
+      <a ng-show="!user.es_activo" ng-click="activar(user)" class="text-success pull-right" title="Activar usuario">
+        <span class="glyphicon glyphicon-ok"></span>
+      </a>
+      <a ng-click="ver_form_editar(user)" class="text-primary pull-right" title="Editar datos de usuario">
+        <span class="glyphicon glyphicon-edit"></span>
+      </a>
+      </span>
+    </li>
+  </ul>
+</div>

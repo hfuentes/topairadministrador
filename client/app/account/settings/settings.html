@@ -1,0 +1,78 @@
+<navbar></navbar>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Configuración</h2>
+    </div>
+    <div class="col-md-12">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#">Cambiar contraseña</a>
+        </li>
+        <li class="list-group-item">
+          <form class="form" name="form" ng-submit="changePassword(form)" novalidate>
+            <div class="form-group">
+              <label>Contraseña actual</label>
+              <input type="password" name="password" class="form-control" ng-model="user.oldPassword" mongoose-error/>
+              <p class="help-block" ng-show="form.password.$error.mongoose">
+                {{ errors.other }}
+              </p>
+            </div>
+            <div class="form-group">
+              <label>Contraseña nueva</label>
+              <input type="password" name="newPassword" class="form-control" ng-model="user.newPassword" ng-minlength="3" required/>
+              <p class="help-block" ng-show="(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || submitted)">
+                Solo números y letras, debe tener entre 3 a 10 caracteres.
+              </p>
+            </div>
+            <p class="help-block"> {{ message }} </p>
+            <button class="btn btn-success" type="submit">Modificar contraseña</button>
+          </form>
+        </li>
+      </ul>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#">Parámetros</a>
+        </li>
+        <li class="list-group-item">
+          <form class="form" ng-submit="editar_parametros()">
+            <p class="help-block">Datos por defecto para envío correo resumen a clientes.</p>
+            <div class="form-group">
+              <label>Correos ocultos</label>
+              <input type="text" class="form-control" placeholder="Correos ocultos resumen cliente" ng-model="model.parametros.resumen.cco" ng-list="," ng-trim="true">
+              <p class="help-block">Para agregar multiples correos ocupe ',' (coma) como separador.</p>
+            </div>
+            <div class="form-group">
+              <label>Asunto correo</label>
+              <input type="text" class="form-control" placeholder="Asunto correo resumen cliente" ng-model="model.parametros.resumen.asunto">
+            </div>
+            <div class="form-group">
+              <label>Cuerpo correo</label>
+              <textarea rows="5" class="form-control" placeholder="Escriba cuerpo correo resumen cliente" ng-model="model.parametros.resumen.cuerpo"></textarea>
+            </div>
+            <hr>
+            <div class="form-group">
+              <label>String SMTPs</label>
+              <input type="text" class="form-control" placeholder="Configuración SMTPs" ng-model="model.parametros.correo.smtps">
+            </div>
+            <div class="form-group">
+              <label>Texto From</label>
+              <input type="text" class="form-control" placeholder="Texto From" ng-model="model.parametros.correo.from">
+            </div>
+            <div class="form-group">
+              <label>Texto link hacia resumen</label>
+              <input type="text" class="form-control" placeholder="Texto link hacia resumen" ng-model="model.parametros.correo.link_text">
+            </div>
+            <div class="form-group">
+              <label>Imagen pié de correo</label>
+              <input type="file" class="form-control" placeholder="Imagen pié de correo" ng-model="model.parametros.correo.footer" base-sixty-four-input>
+              <p class="help-block">Debe seleccionar una imagen de tamaño menor a 2MB y tipo JPG.</p>
+              <img class="img-responsive img-set-footer-correo" on-error-src="/assets/images/no-image.png" ng-src="/api/parametro/footer_correo" ng-if="!model.editando">
+            </div>
+            <button class="btn btn-success" type="submit">Modificar parámetros</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

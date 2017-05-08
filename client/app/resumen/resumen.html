@@ -1,0 +1,420 @@
+<navbar></navbar>
+<div class="container">
+  <ul class="list-group">
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-4 col-md-offset-1 col-sm-4 col-sm-offset-1">
+          <img class="img-responsive center-block h-img-header-resumen" delete-on-error-src ng-src="/api/cliente/logo/{{model.resumen.proyecto.cliente._id}}">
+        </div>
+        <div class="col-md-2 col-sm-2">
+          <img class="img-responsive center-block h-img-header-resumen" src="/assets/images/manos.png">
+        </div>
+        <div class="col-md-4 col-sm-4">
+          <img class="img-responsive center-block h-img-header-resumen" src="/assets/images/logo-topair.jpg">
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <h1 class="text-center azul-destacado">{{model.resumen.proyecto.cliente.nombre}}</h1>
+      <h2 class="text-center azul-destacado">{{model.resumen.proyecto.nombre}}</h2>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <dl>
+            <dt>N° de Contrato:</dt>
+            <dd>{{model.resumen.proyecto.numero || 'Sin asignar.'}}</dd>
+            <dt>Periodicidad:</dt>
+            <dd>{{model.resumen.proyecto.periodo || 'Sin asignar.'}}</dd>
+          </dl>
+        </div>
+        <div class="col-md-6 col-sm-6">
+          <dl>
+            <dt>Especialidad:</dt>
+            <dd>{{model.resumen.proyecto.especialidad || 'Sin asignar.'}}</dd>
+            <dt>Fecha inicio:</dt>
+            <dd>{{model.resumen.proyecto.fecha_inicio || 'Sin datos para mostrar' | date:'dd/MM/yyyy' }}</dd>
+            <dt>Fecha finalización:</dt>
+            <dd>{{model.resumen.proyecto.fecha_fin || 'Sin datos para mostrar' | date:'dd/MM/yyyy' }}</dd>
+          </dl>
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <h3>Resumen general</h3>
+      <p class="string-multiline">{{model.resumen.observacion}}</p>
+    </li>
+    <li class="list-group-item">
+      <h3>Detalle de trabajos realizados</h3>
+      <ul class="list-group">
+        <li class="list-group-item" ng-click="model.ver_rojos = !model.ver_rojos">
+          <span class="label label-danger label-bandera-resumen">{{model.resumen.actividades && model.resumen.actividades.length > 0 && model.rojos && model.rojos.length > 0 ? (100 * model.rojos.length / model.resumen.actividades.length) : 0 | number: 0}}%</span>
+          <span>Equipos que presentan dificultades</span>
+          <span class="glyphicon glyphicon-chevron-{{model.ver_rojos ? 'up' : 'down'}} pull-right icono-bandera-resumen icono-color-negro"></span>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_rojos" ng-repeat="actividad in model.rojos = (model.resumen.actividades | filter: { indicador: { es_rojo: true }})">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Equipo:</strong> {{actividad.equipo.nombre}}</p>
+                  <p><strong>Marca:</strong> {{actividad.equipo.marca}}</p>
+                  <p><strong>Modelo:</strong> {{actividad.equipo.modelo}}</p>
+                  <p>
+                    <strong>Tipo:</strong> {{actividad.equipo.tipo ? actividad.equipo.tipo.nombre : 'Sin asignar'}} |
+                    <strong>Capacidad:</strong> {{actividad.equipo.capacidad}} |
+                    <strong>Serie:</strong> {{actividad.equipo.serie}} |
+                    <strong>Antiguedad:</strong> {{actividad.equipo.antiguedad}}
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Operador:</strong> {{actividad.creador.name}}</p>
+                  <p><strong>Motivo visita:</strong> {{actividad.motivo_visita}}</p>
+                  <p><strong>Ubicación:</strong> {{actividad.ubicacion.nombre}}</p>
+                  <p ng-show="actividad.solicitante"><strong>Solicitante:</strong> {{actividad.solicitante}}</p>
+                </div>
+              </div>
+            </li>
+            <a href="#" class="list-group-item" ng-init="actividad.ver_textos = true" ng-click="actividad.ver_textos = !actividad.ver_textos">
+              <span class="azul-destacado">{{actividad.ver_textos ? 'Click para ocultar observaciones' : 'Click para ver observaciones'}}</span>
+            </a>
+            <li class="list-group-item" ng-show="actividad.ver_textos">
+              <div class="row">
+                <div class="col-md-4">
+                  <p><strong>Etapa 1 - Estado inicial equipo</strong></p>
+                  <p class="string-multiline">{{actividad.estado_inicial.texto}}</p>
+                  <img delete-on-error-src class="img-responsive" src="/api/actividad/estado_inicial/imagen/{{actividad._id}}">
+                  <p><small>Fecha ingreso: {{actividad.estado_inicial.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>Etapa 2 - Trabajos realizados</strong></p>
+                  <p class="string-multiline">{{actividad.trabajos_realizados.texto}}</p>
+                  <img delete-on-error-src class="img-responsive" src="/api/actividad/trabajos_realizados/imagen/{{actividad._id}}">
+                  <p><small>Fecha ingreso: {{actividad.trabajos_realizados.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>Etapa 3 - Recomendaciones</strong></p>
+                  <p class="string-multiline">{{actividad.recomendaciones.texto}}</p>
+                  <p><small>Fecha ingreso: {{actividad.recomendaciones.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-12">
+                  <p><strong>Observación gerencia</strong></p>
+                  <p class="string-multiline">{{actividad.observacion.texto ? actividad.observacion.texto : 'Sin datos para mostrar'}}</p>
+                  <p><small>Fecha ingreso: {{actividad.observacion.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+              </div>
+            </li>
+            <a href="#" class="list-group-item" ng-init="actividad.ver_parametros = false" ng-click="actividad.ver_parametros = !actividad.ver_parametros">
+              <span class="azul-destacado">{{actividad.ver_parametros ? 'Click para ocultar parámetros' : 'Click para ver parámetros'}}</span>
+            </a>
+            <li class="list-group-item" ng-hide="actividad.ver_editar || !actividad.ver_parametros">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <p><strong>C. Compresor N°1</strong></p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>R:</strong> {{actividad.parametros.compresor_n1_r}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>S:</strong> {{actividad.parametros.compresor_n1_s}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>T:</strong> {{actividad.parametros.compresor_n1_t}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <p><strong>C. Compresor N°2</strong></p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>R:</strong> {{actividad.parametros.compresor_n2_r}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>S:</strong> {{actividad.parametros.compresor_n2_s}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>T:</strong> {{actividad.parametros.compresor_n2_t}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><strong>P. Succión:</strong> {{actividad.parametros.p_succion}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>P. Descarga:</strong> {{actividad.parametros.p_descarga}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Inyección:</strong> {{actividad.parametros.t_inyeccion}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Retorno:</strong> {{actividad.parametros.t_retorno}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Ambiente:</strong> {{actividad.parametros.t_ambiente}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Exterior:</strong> {{actividad.parametros.t_exterior}}</p>
+                </div>
+              </div>
+              <p><small>Fecha ingreso: {{actividad.parametros.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+            </li>
+          </ul>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_rojos && (!model.rojos || (model.rojos && model.rojos.length === 0))">
+          <span>Sin datos para mostrar.</span>
+        </li>
+        <li class="list-group-item" ng-click="model.ver_amarillos = !model.ver_amarillos">
+          <span class="label label-warning label-bandera-resumen color-amarillo">{{model.resumen.actividades && model.resumen.actividades.length > 0 && model.amarillos && model.amarillos.length > 0 ? (100 * model.amarillos.length / model.resumen.actividades.length) : 0 | number: 0}}%</span>
+          <span>Equipos con alertas preventivas</span>
+          <span class="glyphicon glyphicon-chevron-{{model.ver_amarillos ? 'up' : 'down'}} pull-right icono-bandera-resumen"></span>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_amarillos" ng-repeat="actividad in model.amarillos = (model.resumen.actividades | filter: { indicador: { es_amarillo: true }})">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Equipo:</strong> {{actividad.equipo.nombre}}</p>
+                  <p><strong>Marca:</strong> {{actividad.equipo.marca}}</p>
+                  <p><strong>Modelo:</strong> {{actividad.equipo.modelo}}</p>
+                  <p>
+                    <strong>Tipo:</strong> {{actividad.equipo.tipo ? actividad.equipo.tipo.nombre : 'Sin asignar'}} |
+                    <strong>Capacidad:</strong> {{actividad.equipo.capacidad}} |
+                    <strong>Serie:</strong> {{actividad.equipo.serie}} |
+                    <strong>Antiguedad:</strong> {{actividad.equipo.antiguedad}}
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Operador:</strong> {{actividad.creador.name}}</p>
+                  <p><strong>Motivo visita:</strong> {{actividad.motivo_visita}}</p>
+                  <p><strong>Ubicación:</strong> {{actividad.ubicacion.nombre}}</p>
+                  <p ng-show="actividad.solicitante"><strong>Solicitante:</strong> {{actividad.solicitante}}</p>
+                </div>
+              </div>
+            </li>
+            <a href="#" class="list-group-item" ng-init="actividad.ver_textos = true" ng-click="actividad.ver_textos = !actividad.ver_textos">
+              <span class="azul-destacado">{{actividad.ver_textos ? 'Click para ocultar observaciones' : 'Click para ver observaciones'}}</span>
+            </a>
+            <li class="list-group-item" ng-show="actividad.ver_textos">
+              <div class="row">
+                <div class="col-md-4">
+                  <p><strong>Etapa 1 - Estado inicial equipo</strong></p>
+                  <p class="string-multiline">{{actividad.estado_inicial.texto}}</p>
+                  <img delete-on-error-src class="img-responsive" src="/api/actividad/estado_inicial/imagen/{{actividad._id}}">
+                  <p><small>Fecha ingreso: {{actividad.estado_inicial.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>Etapa 2 - Trabajos realizados</strong></p>
+                  <p class="string-multiline">{{actividad.trabajos_realizados.texto}}</p>
+                  <img delete-on-error-src class="img-responsive" src="/api/actividad/trabajos_realizados/imagen/{{actividad._id}}">
+                  <p><small>Fecha ingreso: {{actividad.trabajos_realizados.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>Etapa 3 - Recomendaciones</strong></p>
+                  <p class="string-multiline">{{actividad.recomendaciones.texto}}</p>
+                  <p><small>Fecha ingreso: {{actividad.recomendaciones.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-12">
+                  <p><strong>Observación gerencia</strong></p>
+                  <p class="string-multiline">{{actividad.observacion.texto ? actividad.observacion.texto : 'Sin datos para mostrar'}}</p>
+                  <p><small>Fecha ingreso: {{actividad.observacion.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+              </div>
+            </li>
+            <a href="#" class="list-group-item" ng-init="actividad.ver_parametros = false" ng-click="actividad.ver_parametros = !actividad.ver_parametros">
+              <span class="azul-destacado">{{actividad.ver_parametros ? 'Click para ocultar parámetros' : 'Click para ver parámetros'}}</span>
+            </a>
+            <li class="list-group-item" ng-hide="actividad.ver_editar || !actividad.ver_parametros">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <p><strong>C. Compresor N°1</strong></p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>R:</strong> {{actividad.parametros.compresor_n1_r}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>S:</strong> {{actividad.parametros.compresor_n1_s}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>T:</strong> {{actividad.parametros.compresor_n1_t}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <p><strong>C. Compresor N°2</strong></p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>R:</strong> {{actividad.parametros.compresor_n2_r}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>S:</strong> {{actividad.parametros.compresor_n2_s}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>T:</strong> {{actividad.parametros.compresor_n2_t}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><strong>P. Succión:</strong> {{actividad.parametros.p_succion}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>P. Descarga:</strong> {{actividad.parametros.p_descarga}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Inyección:</strong> {{actividad.parametros.t_inyeccion}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Retorno:</strong> {{actividad.parametros.t_retorno}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Ambiente:</strong> {{actividad.parametros.t_ambiente}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Exterior:</strong> {{actividad.parametros.t_exterior}}</p>
+                </div>
+              </div>
+              <p><small>Fecha ingreso: {{actividad.parametros.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+            </li>
+          </ul>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_amarillos && (!model.amarillos || (model.amarillos && model.amarillos.length === 0))">
+          <span>Sin datos para mostrar.</span>
+        </li>
+        <li class="list-group-item" ng-click="model.ver_verdes = !model.ver_verdes">
+          <span class="label label-success label-bandera-resumen">{{model.resumen.actividades && model.resumen.actividades.length > 0 && model.verdes && model.verdes.length > 0 ? (100 * model.verdes.length / model.resumen.actividades.length) : 0 | number: 0}}%</span>
+          <span>Equipos sin dificultades ni alertas</span>
+          <span class="glyphicon glyphicon-chevron-{{model.ver_verdes ? 'up' : 'down'}} pull-right icono-bandera-resumen"></span>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_verdes" ng-repeat="actividad in model.verdes = (model.resumen.actividades | filter: { indicador: { es_verde: true }})">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Equipo:</strong> {{actividad.equipo.nombre}}</p>
+                  <p><strong>Marca:</strong> {{actividad.equipo.marca}}</p>
+                  <p><strong>Modelo:</strong> {{actividad.equipo.modelo}}</p>
+                  <p>
+                    <strong>Tipo:</strong> {{actividad.equipo.tipo ? actividad.equipo.tipo.nombre : 'Sin asignar'}} |
+                    <strong>Capacidad:</strong> {{actividad.equipo.capacidad}} |
+                    <strong>Serie:</strong> {{actividad.equipo.serie}} |
+                    <strong>Antiguedad:</strong> {{actividad.equipo.antiguedad}}
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Operador:</strong> {{actividad.creador.name}}</p>
+                  <p><strong>Motivo visita:</strong> {{actividad.motivo_visita}}</p>
+                  <p><strong>Ubicación:</strong> {{actividad.ubicacion.nombre}}</p>
+                  <p ng-show="actividad.solicitante"><strong>Solicitante:</strong> {{actividad.solicitante}}</p>
+                </div>
+              </div>
+            </li>
+            <a href="#" class="list-group-item" ng-init="actividad.ver_textos = true" ng-click="actividad.ver_textos = !actividad.ver_textos">
+              <span class="azul-destacado">{{actividad.ver_textos ? 'Click para ocultar observaciones' : 'Click para ver observaciones'}}</span>
+            </a>
+            <li class="list-group-item" ng-show="actividad.ver_textos">
+              <div class="row">
+                <div class="col-md-4">
+                  <p><strong>Etapa 1 - Estado inicial equipo</strong></p>
+                  <p class="string-multiline">{{actividad.estado_inicial.texto}}</p>
+                  <img delete-on-error-src class="img-responsive" src="/api/actividad/estado_inicial/imagen/{{actividad._id}}">
+                  <p><small>Fecha ingreso: {{actividad.estado_inicial.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>Etapa 2 - Trabajos realizados</strong></p>
+                  <p class="string-multiline">{{actividad.trabajos_realizados.texto}}</p>
+                  <img delete-on-error-src class="img-responsive" src="/api/actividad/trabajos_realizados/imagen/{{actividad._id}}">
+                  <p><small>Fecha ingreso: {{actividad.trabajos_realizados.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-4">
+                  <p><strong>Etapa 3 - Recomendaciones</strong></p>
+                  <p class="string-multiline">{{actividad.recomendaciones.texto}}</p>
+                  <p><small>Fecha ingreso: {{actividad.recomendaciones.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+                <div class="col-md-12">
+                  <p><strong>Observación gerencia</strong></p>
+                  <p class="string-multiline">{{actividad.observacion.texto ? actividad.observacion.texto : 'Sin datos para mostrar'}}</p>
+                  <p><small>Fecha ingreso: {{actividad.observacion.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+                </div>
+              </div>
+            </li>
+            <a href="#" class="list-group-item" ng-init="actividad.ver_parametros = false" ng-click="actividad.ver_parametros = !actividad.ver_parametros">
+              <span class="azul-destacado">{{actividad.ver_parametros ? 'Click para ocultar parámetros' : 'Click para ver parámetros'}}</span>
+            </a>
+            <li class="list-group-item" ng-hide="actividad.ver_editar || !actividad.ver_parametros">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <p><strong>C. Compresor N°1</strong></p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>R:</strong> {{actividad.parametros.compresor_n1_r}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>S:</strong> {{actividad.parametros.compresor_n1_s}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>T:</strong> {{actividad.parametros.compresor_n1_t}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <p><strong>C. Compresor N°2</strong></p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>R:</strong> {{actividad.parametros.compresor_n2_r}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>S:</strong> {{actividad.parametros.compresor_n2_s}}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p><strong>T:</strong> {{actividad.parametros.compresor_n2_t}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-2">
+                  <p><strong>P. Succión:</strong> {{actividad.parametros.p_succion}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>P. Descarga:</strong> {{actividad.parametros.p_descarga}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Inyección:</strong> {{actividad.parametros.t_inyeccion}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Retorno:</strong> {{actividad.parametros.t_retorno}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Ambiente:</strong> {{actividad.parametros.t_ambiente}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p><strong>T. Exterior:</strong> {{actividad.parametros.t_exterior}}</p>
+                </div>
+              </div>
+              <p><small>Fecha ingreso: {{actividad.parametros.fecha_ingreso | date:'dd/MM/yyyy HH:mm'}}</small></p>
+            </li>
+          </ul>
+        </li>
+        <li class="list-group-item" ng-show="model.ver_verdes && (!model.verdes || (model.verdes && model.verdes.length === 0))">
+          <span>Sin datos para mostrar.</span>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<footer></footer>

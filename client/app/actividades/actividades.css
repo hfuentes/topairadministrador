@@ -1,0 +1,26 @@
+.imagen-cliente-actividades {
+  max-width: 90px;
+  max-height: 90px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-top: 20px;
+}
+
+.col-indicador-actividad-1 {
+  width: 3.333333% !important;
+}
+
+.col-selector-actividad-1 {
+  width: 7% !important;
+}
+
+.icono-selector-actividad {
+  font-size: 2em;
+  color: grey;
+  margin-right: -2px;
+}
+
+.scroll-lista-trab-realizados {
+  overflow-x: hidden;
+  height: 241px;
+}

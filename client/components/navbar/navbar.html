@@ -1,0 +1,31 @@
+<div class="navbar navbar-default navbar-fixed-top" ng-controller="NavbarCtrl">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" ng-click="isCollapsed = !isCollapsed">
+        <span class="sr-only">Activar menú</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand logo-menu" rel="home" href="/" title="Topair">
+        <img src="/assets/images/logo-topair.png">
+      </a>
+    </div>
+    <div collapse="isCollapsed" class="navbar-collapse collapse" id="navbar-main">
+      <ul class="nav navbar-nav">
+        <li ng-show="isAdmin()" ui-sref-active="active"><a ui-sref="proyectos">Contratos</a></li>
+        <li ng-show="isAdmin()" ui-sref-active="active"><a ui-sref="clientes">Clientes</a></li>
+        <li ng-show="isAdmin()" ui-sref-active="active"><a ui-sref="equipos">Equipos</a></li>
+        <li ng-show="isAdmin()" ui-sref-active="active"><a ui-sref="admin">Usuarios</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li ng-hide="isLoggedIn()" ui-sref-active="active"><a ui-sref="login">Entrar</a></li>
+        <li ng-show="isLoggedIn()">
+          <p class="navbar-text">{{getCurrentUser().name}}</p>
+        </li>
+        <li ng-show="isLoggedIn()" ui-sref-active="active"><a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span></a></li>
+        <li ng-show="isLoggedIn()"><a ui-sref="logout">Cerrar sesión</a></li>
+      </ul>
+    </div>
+  </div>
+</div>

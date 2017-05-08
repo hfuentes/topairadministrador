@@ -1,0 +1,210 @@
+/**
+ * Bootstrap Fonts
+ */
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('../bower_components/bootstrap/fonts/glyphicons-halflings-regular.eot');
+  src: url('../bower_components/bootstrap/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../bower_components/bootstrap/fonts/glyphicons-halflings-regular.woff') format('woff'), url('../bower_components/bootstrap/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../bower_components/bootstrap/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+
+/**
+ *Font Awesome Fonts
+ */
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?v=4.1.0');
+  src: url('../bower_components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.1.0') format('embedded-opentype'), url('../bower_components/font-awesome/fonts/fontawesome-webfont.woff?v=4.1.0') format('woff'), url('../bower_components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.1.0') format('truetype'), url('../bower_components/font-awesome/fonts/fontawesome-webfont.svg?v=4.1.0#fontawesomeregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+/**
+ * App-wide Styles
+ */
+
+.browserupgrade {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+
+/* requerido para obtener navbar fixed on top */
+
+body {
+  padding-top: 70px;
+  background-color: rgba(0, 0, 0, .025);
+}
+
+
+/*estilos para directiva loading global*/
+
+.loading-spiner {
+  background: rgba(0, 0, 0, 0.7) repeat scroll 0 0;
+  height: 100%;
+  left: 0;
+  margin: auto;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999999;
+}
+
+.loading-bokeh {
+  font-size: 70px;
+  height: 1em;
+  list-style: outside none none;
+  margin: 0 auto;
+  position: relative;
+  top: 35%;
+  width: 1em;
+  z-index: 2147483647;
+}
+
+.glyphicon-refresh-animate {
+  -animation: spin .7s infinite linear !important;
+  -ms-animation: spin .7s infinite linear !important;
+  -webkit-animation: spinw .7s infinite linear !important;
+  -moz-animation: spinm .7s infinite linear !important;
+  -o-animation: spino .7s infinite linear !important;
+  color: rgba(0, 0, 0, .5) !important;
+}
+
+@keyframes spin {
+  from {
+    transform: scale(1) rotate(0deg);
+  }
+  to {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spinw {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes spinm {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+@-o-keyframes spino {
+  from {
+    -o-transform: rotate(0deg);
+  }
+  to {
+    -o-transform: rotate(360deg);
+  }
+}
+
+
+/*estilos para mensaje flotante*/
+
+.mensaje-flotante {
+  position: fixed;
+  z-index: 999;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.logo-menu {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.logo-menu img {
+  max-width: 100px;
+  margin-top: -7px;
+}
+
+.azul-destacado {
+  color: #428bca;
+}
+
+.azul-destacado:hover {
+  color: #2a6496;
+  text-decoration: underline;
+}
+
+.img-set-footer-correo {
+  max-height: 200px;
+}
+
+.string-multiline {
+  /*esta propiedad css permite ver los saltos de linea de string en descripciones*/
+  white-space: pre-wrap;
+}
+
+
+/*estilos para hover en list group (no es nativo en bootstrap)*/
+
+.list-group-hover > li:hover {
+  background-color: #f5f5f5;
+}
+
+.list-group-hover > li.list-group-item-active:hover {
+  background-color: #e8e8e8;
+}
+
+.list-group-hover > li.list-group-item-success:hover {
+  background-color: #d0e9c6;
+}
+
+.list-group-hover > li.list-group-item-info:hover {
+  background-color: #c4e3f3;
+}
+
+.list-group-hover > li.list-group-item-warning:hover {
+  background-color: #faf2cc;
+}
+
+.list-group-hover > li.list-group-item-danger:hover {
+  background-color: #ebcccc;
+}
+
+.list-group-hover > label:hover {
+  background-color: #f5f5f5;
+}
+
+.list-group-hover > label.list-group-item-active:hover {
+  background-color: #e8e8e8;
+}
+
+.list-group-hover > label.list-group-item-success:hover {
+  background-color: #d0e9c6;
+}
+
+.list-group-hover > label.list-group-item-info:hover {
+  background-color: #c4e3f3;
+}
+
+.list-group-hover > label.list-group-item-warning:hover {
+  background-color: #faf2cc;
+}
+
+.list-group-hover > label.list-group-item-danger:hover {
+  background-color: #ebcccc;
+}
+
+
+/*FIN: estilos para hover en list group (no es nativo en bootstrap)*/
+
+.underline-hover:hover {
+  cursor: context-menu;
+  text-decoration: underline;
+}
